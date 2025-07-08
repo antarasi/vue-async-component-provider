@@ -1,0 +1,48 @@
+{
+  "name": "vue-async-component-provider",
+  "version": "0.1.0",
+  "description": "Customizable Suspense replacement. Use it as a wrapper component to manage state of multiple async dependencies in a component tree.",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "vue",
+    "suspense",
+    "async",
+    "component",
+    "provider"
+  ],
+  "author": "AntaraSI",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antarasi/vue-async-component-provider.git"
+  },
+  "bugs": {
+    "url": "https://github.com/antarasi/vue-async-component-provider/issues"
+  },
+  "homepage": "https://github.com/antarasi/vue-async-component-provider#readme",
+  "peerDependencies": {
+    "vue": ">=3.0.0"
+  }
+}
