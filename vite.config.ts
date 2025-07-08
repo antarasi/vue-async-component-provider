@@ -8,6 +8,7 @@ export default defineConfig({
   plugins: [
     vue(), 
     dts({
+      rollupTypes: true,
       tsconfigPath: './tsconfig.build.json',
     })
   ],
@@ -16,6 +17,7 @@ export default defineConfig({
       entry: resolve(__dirname, "src/index.ts"),
       name: "AsyncComponentProvider",
       fileName: "async-component-provider",
+      formats: ['es'],
     },
     rollupOptions: {
       external: ["vue"],

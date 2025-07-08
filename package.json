@@ -9,13 +9,14 @@
     "preview": "vite preview",
     "prepare": "npm run build"
   },
-  "main": "./dist/async-component-provider.umd.js",
   "module": "./dist/async-component-provider.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/async-component-provider.esm.js",
-      "require": "./dist/async-component-provider.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/async-component-provider.js"
+      }
     }
   },
   "files": [
