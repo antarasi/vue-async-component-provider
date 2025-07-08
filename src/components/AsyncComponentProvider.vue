@@ -8,6 +8,14 @@ declare module 'vue' {
   }
 }
 
+function createDebounce(delayMs: number) {
+  let timeout: number | undefined = undefined
+  return function (callback: () => void): void {
+    clearTimeout(timeout)
+    timeout = window.setTimeout(callback, delayMs)
+  }
+}
+
 /**
  * AsyncComponentProvider.vue
  *
@@ -41,6 +49,7 @@ export default defineComponent({
       stopResolving: false,
       registeredComponentIds: [] as number[],
       resolvedComponentIds: new Set() as Set<number>,
+      resolvedDebounce: createDebounce(50),
     }
   },
   methods: {
@@ -64,19 +73,19 @@ export default defineComponent({
 
       // wait for the next tick to ensure all components are created before we start resolving
       // this.$nextTick() is not enough - when rendering many child async components the first batch may be resolved before the second batch is created
-      await new Promise((resolve) => setTimeout(resolve, 100))
+      this.resolvedDebounce(() => {
+        if (this.isResolved()) {
+          this.loading = false
 
-      if (this.isResolved()) {
-        this.loading = false
+          if (this.resolveOnce) {
+            this.stopResolving = true
+          }
 
-        if (this.resolveOnce) {
-          this.stopResolving = true
+          this.resolvedComponentIds.clear()
+          this.registeredComponentIds.length = 0
+          this.$emit('resolved')
         }
-
-        this.resolvedComponentIds.clear()
-        this.registeredComponentIds.length = 0
-        this.$emit('resolved')
-      }
+      })
     },
   },
 })
