@@ -1,0 +1,12 @@
+src/
+tsconfig.json
+tsconfig.build.json
+tsconfig.app.json
+tsconfig.node.json
+vite.config.ts
+.git/
+.gitignore
+*.log
+node_modules/
+.DS_Store
+*.tsbuildinfo 
