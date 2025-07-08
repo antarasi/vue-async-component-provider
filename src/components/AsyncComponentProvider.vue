@@ -4,8 +4,7 @@ import { defineComponent, type ComponentPublicInstance } from 'vue'
 declare module 'vue' {
   interface ComponentCustomProperties {
     asyncComponentLoading: (component: ComponentPublicInstance) => void
-    asyncComponentResolved: (component: ComponentPublicInstance) => void
-    asyncComponentUnregistered: (component: ComponentPublicInstance) => void
+    asyncComponentResolved: (component: ComponentPublicInstance) => Promise<void>
   }
 }
 
@@ -27,7 +26,6 @@ export default defineComponent({
     return {
       asyncComponentLoading: this.asyncComponentLoading,
       asyncComponentResolved: this.asyncComponentResolved,
-      asyncComponentUnregistered: this.asyncComponentUnregistered,
     }
   },
   props: {
@@ -59,10 +57,14 @@ export default defineComponent({
         this.$emit('loading')
       }
     },
-    asyncComponentResolved(component: ComponentPublicInstance): void {
+    async asyncComponentResolved(component: ComponentPublicInstance): Promise<void> {
       if (this.stopResolving) return
 
       this.resolvedComponentIds.add(component.$.uid)
+
+      // wait for the next tick to ensure all components are created before we start resolving
+      // this.$nextTick() is not enough - when rendering many child async components the first batch may be resolved before the second batch is created
+      await new Promise((resolve) => setTimeout(resolve, 100))
 
       if (this.isResolved()) {
         this.loading = false
@@ -70,11 +72,11 @@ export default defineComponent({
         if (this.resolveOnce) {
           this.stopResolving = true
         }
+
+        this.resolvedComponentIds.clear()
+        this.registeredComponentIds.length = 0
         this.$emit('resolved')
       }
-    },
-    asyncComponentUnregistered(component: ComponentPublicInstance): void {
-      this.registeredComponentIds = this.registeredComponentIds.filter((id: number) => id !== component.$.uid)
     },
   },
 })
