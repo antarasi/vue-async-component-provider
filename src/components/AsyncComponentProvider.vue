@@ -47,9 +47,9 @@ export default defineComponent({
   },
   methods: {
     isResolved() {
-      return this.registeredComponentIds.every((id) => this.resolvedComponentIds.has(id))
+      return this.registeredComponentIds.every((id: number) => this.resolvedComponentIds.has(id))
     },
-    asyncComponentLoading(component: ComponentPublicInstance) {
+    asyncComponentLoading(component: ComponentPublicInstance): void {
       if (this.stopResolving) return
 
       this.registeredComponentIds.push(component.$.uid)
@@ -59,7 +59,7 @@ export default defineComponent({
         this.$emit('loading')
       }
     },
-    asyncComponentResolved(component: ComponentPublicInstance) {
+    asyncComponentResolved(component: ComponentPublicInstance): void {
       if (this.stopResolving) return
 
       this.resolvedComponentIds.add(component.$.uid)
@@ -73,8 +73,8 @@ export default defineComponent({
         this.$emit('resolved')
       }
     },
-    asyncComponentUnregistered(component: ComponentPublicInstance) {
-      this.registeredComponentIds = this.registeredComponentIds.filter((id) => id !== component.$.uid)
+    asyncComponentUnregistered(component: ComponentPublicInstance): void {
+      this.registeredComponentIds = this.registeredComponentIds.filter((id: number) => id !== component.$.uid)
     },
   },
 })

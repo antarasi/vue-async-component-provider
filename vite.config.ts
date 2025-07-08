@@ -5,7 +5,12 @@ import dts from "vite-plugin-dts";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue(), dts()],
+  plugins: [
+    vue(), 
+    dts({
+      tsconfigPath: './tsconfig.build.json',
+    })
+  ],
   build: {
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
