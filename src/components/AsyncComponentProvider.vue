@@ -42,7 +42,7 @@ export default defineComponent({
       default: false,
     },
   },
-  emits: ['loading', 'resolved'],
+  emits: ['loading', 'resolved', 'component-resolved'],
   data() {
     return {
       loading: false,
@@ -69,6 +69,7 @@ export default defineComponent({
     async asyncComponentResolved(component: ComponentPublicInstance): Promise<void> {
       if (this.stopResolving) return
 
+      this.$emit('component-resolved', component)
       this.resolvedComponentIds.add(component.$.uid)
 
       // wait for the next tick to ensure all components are created before we start resolving
