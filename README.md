@@ -1,12 +1,10 @@
 # vue-async-component-provider
 
+[![npm version](https://img.shields.io/npm/v/vue-async-component-provider)](https://npmjs.com/package/vue-async-component-provider)
+
 A Vue 3 component providing a customizable Suspense replacement. 
 
 Use `AsyncComponentProvider` when you have multiple child components that load data asynchronously and you want the parent component to wait until all child components resolve.
-
-## Demo
-
-TBD
 
 ## Installation
 
@@ -16,10 +14,12 @@ npm install vue-async-component-provider
 
 ## Usage
 
-### Vue Options API
+### Vue Options API 
 
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz_small.svg)](https://stackblitz.com/github/antarasi/vue-async-component-provider/tree/main/examples/options-api?file=src%2FApp.vue)
+
+#### Parent Component
 ```vue
-// Parent component
 <script lang="ts">
 import { AsyncComponentProvider } from 'vue-async-component-provider'
 import Child from './components/Child.vue'
@@ -56,8 +56,8 @@ export default defineComponent({
 
 ```
 
+#### Child component
 ```vue
-// Child component
 <template>
     <li>Child #{{ $.uid }} - {{ content }}</li>
 </template>
