@@ -1,6 +1,6 @@
 {
   "name": "vue-async-component-provider",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Customizable Suspense replacement. Use it as a wrapper component to manage state of multiple async dependencies in a component tree.",
   "type": "module",
   "scripts": {
