@@ -1,6 +1,12 @@
 # vue-async-component-provider
 
-A Vue 3 component library providing a customizable Suspense replacement. Use `AsyncComponentProvider` as a wrapper component to manage the state of multiple async dependencies in a component tree.
+A Vue 3 component providing a customizable Suspense replacement. 
+
+Use `AsyncComponentProvider` when you have multiple child components that load data asynchronously and you want the parent component to wait until all child components resolve.
+
+## Demo
+
+TBD
 
 ## Installation
 
@@ -10,64 +16,75 @@ npm install vue-async-component-provider
 
 ## Usage
 
+### Vue Options API
+
 ```vue
 // Parent component
 <script lang="ts">
 import { AsyncComponentProvider } from 'vue-async-component-provider'
+import Child from './components/Child.vue'
+import { defineComponent } from 'vue';
 
-export default {
-  components: {
-    AsyncComponentProvider
-  },
-  methods: {
-    onAsyncChildrenResolved() {
-      console.log('all children are loaded')
-    },
-    onAsyncChildrenStartedLoading() {
-      console.log('async children started loading')
-    }
-  }
-}
-</script>
-
-<template>
-  <AsyncComponentProvider @resolved="onAsyncChildrenResolved" @loading="onAsyncChildrenStartedLoading">
-    <ChildComponentWithAsyncLoad v-for="item in items">
-
-    <template #fallback>
-      <div>Multiple Components Loading...</div>
-    </template>
-  </AsyncComponentProvider>
-</template>
-```
-
-```vue
-// Child component
-<script lang="ts">
 export default defineComponent({
-  data() {
-    return {
-      content: 'Loading...'
-    }
-  },
-  beforeMount() {
-    // register to async provider before the component is mounted
-    this.asyncComponentLoading(this)
+  name: 'App',
+  components: {
+    AsyncComponentProvider,
+    Child,
   },
   methods: {
-    async renderContent() {
-      await new Promise((resolve) => setTimeout(resolve, 3000))
-      this.content = "Loaded component " + this.$.uid;
-      // tell async provider this component has finished loading
-      this.asyncComponentResolved(this)
+    onAllResolved() {
+      console.log('All resolved')
+    },
+    onLoadingStarted() {
+      console.log('Loading started')
     },
   },
 })
 </script>
 
 <template>
-  <div>{{ content }}</div>
+  <AsyncComponentProvider :resolve-once="resolveOnce" @resolved="onAllResolved" @loading="onLoadingStarted">
+    <ul>
+      <Child v-for="i in 20" :key="i" />
+    </ul>
+
+    <template #fallback>
+      <div>Multiple Components Loading...</div>
+    </template> 
+  </AsyncComponentProvider>
 </template>
+
+```
+
+```vue
+// Child component
+<template>
+    <li>Child #{{ $.uid }} - {{ content }}</li>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'Child',
+  data() {
+    return {
+      content: 'Loading...',
+      resolveTime: Math.floor(Math.random() * 3000) + 1000, // 1-4 seconds
+    }
+  },
+  inject: ['asyncComponentLoading', 'asyncComponentResolved'],
+  created() {
+      this.asyncComponentLoading(this)
+  },
+  mounted() {
+    setTimeout(() => {
+      this.content = 'Loaded in ' + this.resolveTime + 'ms'
+      this.asyncComponentResolved(this)
+    }, this.resolveTime)
+  },
+})
+</script>
 ```
 
 ## API
@@ -80,7 +97,7 @@ export default defineComponent({
 
 ### Slots
 
-- **default**: The content/components that may trigger async loading.
+- **default**: The components that may trigger async loading.
 - **fallback**: (Named slot) Content to display while loading is in progress. If the fallback slot is not implemented, individual components are responsibile for rendering their loading state.
 
 ### Events
@@ -92,14 +109,16 @@ export default defineComponent({
 
 ## How It Works
 
-- Child components can call the injected methods to notify the provider when they start or finish loading:
+- Child components call the injected methods to notify the provider when they start or finish loading:
   - `asyncComponentLoading(component)`
   - `asyncComponentResolved(component)`
-  - `asyncComponentUnregistered(component)`
 
 - The provider tracks all registered async children and their resolution state.
 - When all registered children are resolved, the fallback is hidden and the `resolved` event is emitted.
 
+## Contributing
+
+PRs and suggestions welcome!
 
 ## License
 
